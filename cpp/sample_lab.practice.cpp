@@ -5,8 +5,8 @@ class InvalidFeeException {
     string message;
 
     public:
-    InvalidFeeException(const string msg) : message(msg) {}
-    string getMessage() { return message; }
+    InvalidFeeException(const string& msg) : message(msg) {}
+    const string& getMessage() { return message; }
 };
 
 enum Consultation {
@@ -25,9 +25,8 @@ class Appointment {
     string consultationType;
 
     public:
-    // TODO: CONSTRUCTOR
-    Appointment() : patientName(""), mobileNo(mobileNo), consultationType(consultationType), patientId(patientId) {}
-    Appointment(string patientName, string mobileNo, string consultationType, int patientId, int gst=0) : patientName(patientName), mobileNo(mobileNo), consultationType(consultationType), patientId(patientId) {}
+    Appointment() : patientName(""), mobileNo(""), consultationType(""), patientId(0) {}
+    Appointment(string patientName, string mobileNo, string consultationType, int patientId) : patientName(patientName), mobileNo(mobileNo), consultationType(consultationType), patientId(patientId) {}
 
     virtual void acceptRecord() {
         cout<<"Enter details: "<<endl;
@@ -57,7 +56,9 @@ class Appointment {
     string getConsultationType() { return consultationType; }
 
     virtual void calculateTotalBill() = 0;
-    virtual void displayBill() = 0;    
+    virtual void displayBill() = 0; 
+    
+    virtual ~Appointment() {}
 };
 
 class GeneralConsultation : public Appointment{
@@ -68,7 +69,7 @@ class GeneralConsultation : public Appointment{
     public: 
     // TODO: CONSTRUCTOR
     GeneralConsultation(string consultationType) : doctorName(""), consultationFee(0.0) { Appointment::consultationType = consultationType; }
-    GeneralConsultation(string patientName, string mobileNo, string consultationType, int patientId, string doctorName, double consultationFee) : Appointment(patientName, mobileNo, consultationType, patientId, 5), doctorName(doctorName), consultationFee(consultationFee) {}
+    GeneralConsultation(string patientName, string mobileNo, string consultationType, int patientId, string doctorName, double consultationFee) : Appointment(patientName, mobileNo, consultationType, patientId), doctorName(doctorName), consultationFee(consultationFee) {}
 
     string getDoctorName() { return doctorName; }
     double getConsultationFee() { return consultationFee; }
@@ -80,10 +81,13 @@ class GeneralConsultation : public Appointment{
         cout<<"Doctor name: ";
         cin>>this->doctorName;
         cout<<"Consultation Fee";
-        cin>>this->consultationFee;
-        if(consultationFee<0) {
-            throw InvalidFeeException("Fee less than 0.");
-        }        
+        int fee;
+        cin>>fee;
+        if(fee<0) {
+            throw InvalidFeeException("Invalid input! Consultation Fee/Price cannot be negative.");
+        } else {
+            this->consultationFee = fee;
+        }
     }
 
     void displayRecord() {
@@ -126,10 +130,13 @@ class SpecialistConsultation : public Appointment {
         cout<<"Specialization: ";
         cin>>this->specialization;
         cout<<"Consultation fee: ";
-        cin>>this->consultationFee;
-        if(consultationFee<0) {
-            throw InvalidFeeException("Fee less than 0.");
-        }   
+        int fee;
+        cin>>fee;
+        if(fee<0) {
+            throw InvalidFeeException("Invalid input! Consultation Fee/Price cannot be negative.");
+        } else {
+            this->consultationFee = fee;
+        }
     }
 
     void displayRecord() {
@@ -188,10 +195,13 @@ class DiagnosticConsultation : public Appointment {
         cout<<"Doctor name: ";
         cin>>this->doctorName;
         cout<<"Consultation fee: ";
-        cin>>consultationFee;
-        if(consultationFee<0) {
-            throw InvalidFeeException("Fee less than 0.");
-        }   
+        int fee;
+        cin>>fee;
+        if(fee<0) {
+            throw InvalidFeeException("Invalid input! Consultation Fee/Price cannot be negative.");
+        } else {
+            this->consultationFee = fee;
+        }
         setTests();
     }
 
@@ -285,8 +295,8 @@ class AppointmentFactory {
 int main() {
     int choice;
     Appointment* ap;
-    try {
-        while((choice = menuList()) != 0) {
+    while((choice = menuList()) != 0) {
+        try {
             switch(choice) {
                 case GENERAL_CONSULTATION: 
                     ap = ::AppointmentFactory::getInstance(GENERAL_CONSULTATION);
@@ -299,14 +309,18 @@ int main() {
                     break;
                     
             }
-            ap->acceptRecord();
-            ap->calculateTotalBill();
-            ap->displayRecord();
+            if(ap!=nullptr) {    
+                ap->acceptRecord();
+                ap->calculateTotalBill();
+                ap->displayRecord();
+                delete ap;
+                ap = nullptr;
+            }
+        } catch(InvalidFeeException &ex) {
+            cout<<"InvalidFeeException: "<<ex.getMessage()<<endl;
+        } catch(...) {
+            cout<<"Exception occured"<<endl;
         }
-    } catch(InvalidFeeException ex) {
-        cout<<"InvalidFeeException: "<<ex.getMessage()<<endl;
-    } catch(...) {
-        cout<<"Exception occured"<<endl;
     }
         
     return 0;
