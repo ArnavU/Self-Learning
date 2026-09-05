@@ -25,15 +25,21 @@ class ManageMcq {
         "Computer Networks", "Web Technologies"
     };
     const string historyFile = "quiz_history.txt";
+    mt19937 randomGenerator;
 
 public:
     ManageMcq() {
+        randomGenerator.seed(time(0));
         for (const string& subject : subjects) {
             ofstream subjectFile(fileSafeSubject(subject), ios::app);
         }
     }
 
 private:
+    void randomizeQuestions(vector<MCQ>& questions) {
+        shuffle(questions.begin(), questions.end(), randomGenerator);
+    }
+
     static string cleanPipeFromText(string value) {
         for(auto& ch: value) {
             if(ch == '|') ch = '/';
@@ -271,7 +277,7 @@ private:
         vector<MCQ> questions = loadQuestions(subjects[subjectIndex]);
         if (questions.empty()) { cout << "No questions available for this subject.\n"; return; }
         int count = readInteger("Number of questions (1-" + to_string(questions.size()) + "): ");
-        // TODO: RANDOMIZE THE QUESTIONS REMAINING
+        randomizeQuestions(questions);
         questions.resize(count);
         int score = 0;
         vector<int> answers;
@@ -309,20 +315,39 @@ private:
 
     void showAnalysis() const {
         vector<Attempt> attempts = loadAttempts();
-        if (attempts.empty()) { cout << "No quiz history available.\n"; return; }
+        if (attempts.empty()) {
+            cout << "No quiz history available.\n";
+            return;
+        }
+
         cout << "\n===== SUBJECT-WISE ANALYSIS =====\n";
+
         for (const string& subject : subjects) {
             vector<Attempt> subjectAttempts;
-            copy_if(attempts.begin(), attempts.end(), back_inserter(subjectAttempts), [&subject](const Attempt& attempt) { return attempt.subject == subject; });
+
+            for (const Attempt& attempt : attempts) {
+                if (attempt.subject == subject) {
+                    subjectAttempts.push_back(attempt);
+                }
+            }
+
             if (subjectAttempts.empty()) continue;
+
             double average = 0;
             int best = 0;
+
             for (const Attempt& attempt : subjectAttempts) {
                 average += 100.0 * attempt.score / attempt.total;
-                best = max(best, attempt.score * 100 / attempt.total);
+
+                int percent = attempt.score * 100 / attempt.total;
+                if (percent > best) {
+                    best = percent;
+                }
             }
-            cout << subject << ": " << subjectAttempts.size() << " attempt(s), Best "
-                 << best << "%, Average " << fixed << setprecision(1)
+
+            cout << subject << ": " << subjectAttempts.size()
+                 << " attempt(s), Best " << best << "%, Average "
+                 << fixed << setprecision(1)
                  << average / subjectAttempts.size() << "%\n";
         }
     }
