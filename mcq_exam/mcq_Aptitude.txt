@@ -1,0 +1,4 @@
+1|Who is the inventor of aptitude?|Arnav|Arnav Umarkar|Arnav Ajay Umarkar|None|1|Arnav the great|Aptitude
+2|What is the speed of light?|C|A|B|None of these|1|do google search|Aptitude
+3|What is the value of pi?|3.14|2|4|5|1|Search google|Aptitude
+4|What is train?|Vehicle|Bus|Car|Aeroplane|1|The train is vehicle|Aptitude
