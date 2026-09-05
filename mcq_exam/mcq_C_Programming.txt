@@ -1,1 +1,0 @@
-1|Who invented C?|Denis Ritchi|Arnav|Rahul|None of these|2|Arnav invented C programming in 2026.|C Programming

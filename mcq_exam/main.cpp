@@ -18,6 +18,14 @@ public:
     string date;
 };
 
+class invalid_value_exception {
+    private:
+    string message;
+    public:
+    invalid_value_exception(const string& msg) {this->message = msg;}
+    string getMessage() const {return message;}
+};
+
 class ManageMcq {
     const vector<string> subjects{
         "Aptitude", "C Programming", "C++", "Java", "Python",
@@ -124,7 +132,11 @@ private:
         cout << "\nAvailable subjects\n";
         for (int index = 0; index < subjects.size(); ++index)
             cout << index + 1 << ". " << subjects[index] << '\n';
-        return readInteger("Choose subject: ", 1, subjects.size()) - 1;
+        int subjectIdx = readInteger("Choose subject: ") - 1;
+        if(subjectIdx <= 0 || subjectIdx>subjects.size()) {
+            throw invalid_value_exception("Enter valid subject number.\n");
+        }
+        return subjectIdx;
     }
 
     static void printQuestion(const MCQ& question, int number) {
@@ -224,7 +236,9 @@ private:
     }
 
     void viewSubjectQuestions() const {
-        int subjectIndex = chooseSubject();
+        int subjectIndex;
+        subjectIndex = chooseSubject();
+       
         vector<MCQ> questions = loadQuestions(subjects[subjectIndex]);
         if (questions.empty()) {
             cout << "No questions found for this subject.\n";
@@ -239,17 +253,21 @@ private:
 
     void manageQuestions() {
         while (true) {
-            cout << "\n================ MCQ MANAGEMENT ================\n"
-                 << "1. Add MCQ\n2. View All MCQs\n3. Edit MCQ\n"
-                 << "4. Delete MCQ\n5. View MCQs of Given Subject\n6. Back\n";
-            int choice = readInteger("Enter choice: ", 1, 6);
-            switch (choice) {
-                case 1: addQuestion(); break;
-                case 2: viewAllQuestions(); break;
-                case 3: updateQuestion(); break;
-                case 4: deleteQuestion(); break;
-                case 5: viewSubjectQuestions(); break;
-                case 6: return;
+            try {
+                cout << "\n================ MCQ MANAGEMENT ================\n"
+                << "1. Add MCQ\n2. View All MCQs\n3. Edit MCQ\n"
+                << "4. Delete MCQ\n5. View MCQs of Given Subject\n6. Back\n";
+                int choice = readInteger("Enter choice: ", 1, 6);
+                switch (choice) {
+                    case 1: addQuestion(); break;
+                    case 2: viewAllQuestions(); break;
+                    case 3: updateQuestion(); break;
+                    case 4: deleteQuestion(); break;
+                    case 5: viewSubjectQuestions(); break;
+                    case 6: return;
+                }
+            } catch (const invalid_value_exception& e) {
+                cout << "Exception occured: " << e.getMessage(); 
             }
         }
     }
@@ -377,8 +395,8 @@ int main() {
     try {
         ManageMcq application;
         application.run();
-    } catch (const runtime_error&) {
-        cout << "\nInput closed. Application ended.\n";
+    } catch (...) {
+        cout << "\nInput closed. Application ended.\n"<<"\n";
     }
     return 0;
 }
