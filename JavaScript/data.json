@@ -1,0 +1,25 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "pid": 1,
+            "name": "pen",
+            "price": 20
+        },
+        {
+            "pid": 2,
+            "name": "pencil",
+            "price": 10
+        },
+        {
+            "pid": 3,
+            "name": "book",
+            "price": 50
+        },
+        {
+            "pid": 4,
+            "name": "crayons",
+            "price": 30
+        }
+    ]
+}

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/daisyui@5"
+			rel="stylesheet"
+			type="text/css"
+		/>
+		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+	</head>
+
+	<body>
+		<div class="w-3/4 mx-auto">
+			<h1 class="text-2xl font-bold">
+				Using fetch get the products (Chaining promise)
+			</h1>
+			<button class="btn btn-primary mt-2" onclick="getProducts1()">
+				Get Products
+			</button>
+			<table class="table table-zebra">
+				<thead>
+					<tr>
+						<th>pid</th>
+						<th>name</th>
+						<th>price</th>
+					</tr>
+				</thead>
+				<tbody id="tbody"></tbody>
+			</table>
+		</div>
+		<script>
+			function getProducts1() {
+				const tbody = document.getElementById("tbody");
+				fetch("http://127.0.0.1:5501/data.json")
+					.then((response) => {
+						return response.json();
+					})
+					.then((result) => {
+						// DOM Manipulation
+						const products = result.data;
+						for (let p of products) {
+							const row = `
+                                <tr>
+                                    <td>${p.pid}</td>
+                                    <td>${p.name}</td>
+                                    <td>${p.price}</td>
+                                </tr>`;
+							tbody.innerHTML += row;
+						}
+					})
+					.catch((error) => console.log(error));
+			}
+
+			function getProducts() {
+				const tbody = document.getElementById("tbody");
+				fetch("http://127.0.0.1:5501/data.json")
+					.then((response) => response.json())
+					.then((result) => {
+						// DOM Manipulation
+						const products = result.data;
+						for (let p of products) {
+							const row = `
+                                <tr>
+                                    <td>${p.pid}</td>
+                                    <td>${p.name}</td>
+                                    <td>${p.price}</td>
+                                </tr>`;
+							tbody.innerHTML += row;
+						}
+					})
+					.catch((error) => console.log(error));
+			}
+		</script>
+	</body>
+</html>

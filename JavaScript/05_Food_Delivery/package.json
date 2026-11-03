@@ -1,0 +1,27 @@
+{
+  "name": "05_food_delivery",
+  "version": "1.0.0",
+  "description": "Practice food delivery backend and frontend",
+  "keywords": [
+    "frontend",
+    "backend",
+    "api",
+    "cors",
+    "multer"
+  ],
+  "license": "ISC",
+  "author": "Arnav Umarkar",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "crypto-js": "^4.2.0",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.5.0",
+    "mysql2": "^3.24.6"
+  }
+}

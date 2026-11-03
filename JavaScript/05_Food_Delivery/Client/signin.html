@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signin</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body>
+    <div class="w-3/4 mx-auto p-1">
+        <h1 class="m-2 text-3xl font-bold"> Login to your account...</h1>
+        <div class="m-2">
+            <label class="floating-label">
+                <span>Your Email</span>
+                <input type="text" id="inputEmail" placeholder="mail@site.com" class="input input-md" />
+            </label>
+        </div>
+        <div class="m-2">
+            <label class="floating-label">
+                <span>Your password</span>
+                <input type="password" id="inputPassword" placeholder="*****" class="input input-md" />
+            </label>
+        </div>
+        <div class="m-2">
+            <label>Don't have an account ? To Register </label><a href="signup.html" class="text-blue-500">Click
+                Here</a>
+        </div>
+        <div class="m-2">
+            <button class="btn btn-success" onclick="signin()">Signin</button>
+        </div>
+    </div>
+    <script>
+        async function signin() {
+            const email = document.getElementById('inputEmail').value
+            const password = document.getElementById('inputPassword').value
+            console.log(`${email} - ${password}`)
+            const body = { email, password }
+            try {
+                const response = await fetch("http://localhost:4000/user/signin", {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                    headers: {
+                        "content-type": "application/json"
+                    }
+                })
+                const result = await response.json()
+                console.log(result)
+                if (result.status == 'success') {
+                    alert('signin successful')
+                    window.sessionStorage.setItem('token', result.data.token)
+                    // window.localStorage.setItem('token', result.data.token)
+                    window.location.href = 'home.html'
+                }
+                else
+                    alert(result.error)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    </script>
+</body>
+
+</html>
